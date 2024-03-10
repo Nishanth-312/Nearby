@@ -1,0 +1,56 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Space Finder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Parking Space Finder</h1>
+    <div>
+        <label for="location">Enter Location:</label>
+        <input type="text" id="location" name="location">
+        <button onclick="findNearbyCities()">Find Nearby Cities</button>
+    </div>
+    <div id="cities"></div>
+
+    <script>
+        function findNearbyCities() {
+            var location = document.getElementById('location').value;
+
+            fetch('/find_nearby_cities', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ location: location })
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayCities(data);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function displayCities(cities) {
+            var citiesDiv = document.getElementById('cities');
+            citiesDiv.innerHTML = '';
+
+            if (cities.length === 0) {
+                citiesDiv.innerHTML = 'No nearby cities found.';
+            } else {
+                var ul = document.createElement('ul');
+                cities.forEach(city => {
+                    var li = document.createElement('li');
+                    li.textContent = city;
+                    ul.appendChild(li);
+                });
+                citiesDiv.appendChild(ul);
+            }
+        }
+    </script>
+</body>
+</html>
